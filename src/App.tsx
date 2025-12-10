@@ -1,32 +1,32 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { 
-  AppState, 
-  UserProfile, 
-  FastType, 
-  DayInfo, 
-  MONTH_NAMES_ID, 
-  DAYS_ID 
+import React, { useState, useEffect, useMemo } from 'react';
+import {
+  type AppState,
+  type UserProfile,
+  FastType,
+  type DayInfo,
+  MONTH_NAMES_ID,
+  DAYS_ID
 } from './types';
-import { generateMonthGrid, formatDateKey, getFastTypesForDate } from './services/dateUtils';
+import { generateMonthGrid, getFastTypesForDate } from './services/dateUtils';
 import { loadState, saveState, resetData } from './services/storageService';
-import { 
-  Moon, ChevronLeft, ChevronRight, UserCircle, 
-  CheckCircle2, Plus, Trash2, RefreshCcw, X, Menu, Star, Sun, Sunrise, Calendar
+import {
+  Moon, ChevronLeft, ChevronRight, UserCircle,
+  CheckCircle2, Plus, Trash2, RefreshCcw, X, Star, Sun, Calendar
 } from './components/Icons';
 
 // --- Custom Icons ---
 
 const Mosque = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    width={size} 
-    height={size} 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round" 
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
     className={className}
   >
     {/* Dome */}
@@ -74,13 +74,13 @@ export const App: React.FC = () => {
   const [newProfileName, setNewProfileName] = useState('');
 
   // Derived State
-  const activeProfile = useMemo(() => 
+  const activeProfile = useMemo(() =>
     appState.profiles.find(p => p.id === appState.activeProfileId) || appState.profiles[0],
-  [appState]);
+    [appState]);
 
-  const monthGrid = useMemo(() => 
-    generateMonthGrid(currentDate.getFullYear(), currentDate.getMonth()), 
-  [currentDate]);
+  const monthGrid = useMemo(() =>
+    generateMonthGrid(currentDate.getFullYear(), currentDate.getMonth()),
+    [currentDate]);
 
   // Effects
   useEffect(() => {
@@ -90,7 +90,7 @@ export const App: React.FC = () => {
   useEffect(() => {
     const root = window.document.documentElement;
     root.classList.remove('light', 'dark');
-    
+
     if (appState.theme === 'system') {
       const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       root.classList.add(systemDark ? 'dark' : 'light');
@@ -191,16 +191,16 @@ export const App: React.FC = () => {
 
   const getDayClasses = (day: DayInfo, isCompleted: boolean) => {
     const hasFast = day.fastTypes.length > 0;
-    
+
     let baseClasses = "relative flex flex-col items-center justify-start pt-1 h-20 sm:h-24 border transition-all duration-200 select-none ";
-    
+
     // Backgrounds & Border Logic
     if (isCompleted) {
       baseClasses += "bg-emerald-100 dark:bg-emerald-900/30 border-emerald-300 dark:border-emerald-800 ";
     } else if (hasFast) {
       // Base styles for fasting days
       baseClasses += "cursor-pointer active:scale-95 ";
-      
+
       const types = day.fastTypes;
 
       // Logic to assign specific colored backgrounds (Glass effect)
@@ -212,20 +212,20 @@ export const App: React.FC = () => {
         const isSabtu = types.includes(FastType.SABTU_MUTLAK);
 
         if (isAyyamul && isSeninKamis) {
-             // Mix (Gradient)
-             baseClasses += "bg-gradient-to-br from-blue-50/60 to-amber-50/60 dark:from-blue-900/10 dark:to-amber-900/10 border-slate-200 dark:border-slate-800/50 ";
+          // Mix (Gradient)
+          baseClasses += "bg-gradient-to-br from-blue-50/60 to-amber-50/60 dark:from-blue-900/10 dark:to-amber-900/10 border-slate-200 dark:border-slate-800/50 ";
         } else if (isAyyamul && isSabtu) {
-             // Mix (Gradient)
-             baseClasses += "bg-gradient-to-br from-blue-50/60 to-purple-50/60 dark:from-blue-900/10 dark:to-purple-900/10 border-slate-200 dark:border-slate-800/50 ";
+          // Mix (Gradient)
+          baseClasses += "bg-gradient-to-br from-blue-50/60 to-purple-50/60 dark:from-blue-900/10 dark:to-purple-900/10 border-slate-200 dark:border-slate-800/50 ";
         } else if (isAyyamul) {
-             baseClasses += "bg-blue-50/60 dark:bg-blue-900/10 border-blue-200 dark:border-blue-800/30 hover:bg-blue-100/70 dark:hover:bg-blue-900/20 ";
+          baseClasses += "bg-blue-50/60 dark:bg-blue-900/10 border-blue-200 dark:border-blue-800/30 hover:bg-blue-100/70 dark:hover:bg-blue-900/20 ";
         } else if (isSeninKamis) {
-             baseClasses += "bg-amber-50/60 dark:bg-amber-900/10 border-amber-200 dark:border-amber-800/30 hover:bg-amber-100/70 dark:hover:bg-amber-900/20 ";
+          baseClasses += "bg-amber-50/60 dark:bg-amber-900/10 border-amber-200 dark:border-amber-800/30 hover:bg-amber-100/70 dark:hover:bg-amber-900/20 ";
         } else if (isSabtu) {
-             baseClasses += "bg-purple-50/60 dark:bg-purple-900/10 border-purple-200 dark:border-purple-800/30 hover:bg-purple-100/70 dark:hover:bg-purple-900/20 ";
+          baseClasses += "bg-purple-50/60 dark:bg-purple-900/10 border-purple-200 dark:border-purple-800/30 hover:bg-purple-100/70 dark:hover:bg-purple-900/20 ";
         } else {
-             // Default Fallback
-             baseClasses += "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 ";
+          // Default Fallback
+          baseClasses += "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 ";
         }
       }
 
@@ -246,7 +246,7 @@ export const App: React.FC = () => {
     if (!day.isCurrentMonth) {
       baseClasses += "opacity-40 ";
     }
-    
+
     // Today highlight
     if (day.isToday) {
       baseClasses += "ring-2 ring-inset ring-blue-500 z-10 ";
@@ -257,7 +257,7 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col max-w-lg mx-auto shadow-2xl bg-white dark:bg-slate-900">
-      
+
       {/* Header */}
       <header className="sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b dark:border-slate-800 p-4">
         <div className="flex justify-between items-center mb-4">
@@ -267,17 +267,17 @@ export const App: React.FC = () => {
             </h1>
           </div>
           <div className="flex items-center gap-3">
-             <button 
-                onClick={handleGoToToday} 
-                title="Hari Ini"
-                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors"
-             >
-                <Calendar size={20} />
-             </button>
-             <button onClick={toggleTheme} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors">
+            <button
+              onClick={handleGoToToday}
+              title="Hari Ini"
+              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors"
+            >
+              <Calendar size={20} />
+            </button>
+            <button onClick={toggleTheme} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors">
               {appState.theme === 'light' ? <Sun size={20} /> : appState.theme === 'dark' ? <Moon size={20} /> : <span className="text-xs font-bold px-1">AUTO</span>}
             </button>
-            <button 
+            <button
               onClick={() => setIsProfileModalOpen(true)}
               className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 text-sm font-medium hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors"
             >
@@ -298,7 +298,7 @@ export const App: React.FC = () => {
             </h2>
             {/* Simple Hijri Month Estimation Display based on 15th of current month */}
             <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
-               {getFastTypesForDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), 15), generateMonthGrid(currentDate.getFullYear(), currentDate.getMonth())[15]?.hijri || {monthName: ''} as any)[0] === FastType.RAMADAN ? '☪ RAMADAN' : generateMonthGrid(currentDate.getFullYear(), currentDate.getMonth())[15]?.hijri.monthName}
+              {getFastTypesForDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), 15), generateMonthGrid(currentDate.getFullYear(), currentDate.getMonth())[15]?.hijri || { monthName: '' } as any)[0] === FastType.RAMADAN ? '☪ RAMADAN' : generateMonthGrid(currentDate.getFullYear(), currentDate.getMonth())[15]?.hijri.monthName}
             </p>
           </div>
           <button onClick={handleNextMonth} className="p-2 rounded-md hover:bg-white dark:hover:bg-slate-700 shadow-sm transition-all text-slate-600 dark:text-slate-300">
@@ -309,7 +309,7 @@ export const App: React.FC = () => {
 
       {/* Main Content Area */}
       <main className="flex-1 p-2 overflow-y-auto no-scrollbar">
-        
+
         {/* Days Header */}
         <div className="grid grid-cols-7 mb-2">
           {DAYS_ID.map((day, i) => (
@@ -326,7 +326,7 @@ export const App: React.FC = () => {
             const hasFast = day.fastTypes.length > 0;
 
             return (
-              <div 
+              <div
                 key={day.dateString + index}
                 onClick={() => toggleDateCompletion(day.dateString, hasFast)}
                 className={`
@@ -382,7 +382,7 @@ export const App: React.FC = () => {
               <Star size={16} className="text-amber-500 fill-amber-500/20" />
               <span className="text-sm text-slate-600 dark:text-slate-300">Senin & Kamis</span>
             </div>
-             <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <Star size={16} className="text-purple-500 fill-purple-500/20" />
               <span className="text-sm text-slate-600 dark:text-slate-300">Sabtu Mutlak</span>
             </div>
@@ -393,44 +393,42 @@ export const App: React.FC = () => {
       {/* Footer / Reset Area */}
       <footer className="p-4 border-t dark:border-slate-800 bg-slate-50 dark:bg-slate-900">
         <div className="flex justify-center">
-            <button 
-              onClick={() => {
-                if(window.confirm('Apakah Anda yakin ingin mereset semua data?')) {
-                    resetData();
-                }
-              }}
-              className="flex items-center gap-2 text-xs text-red-400 hover:text-red-500 transition-colors"
-            >
-              <RefreshCcw size={14} />
-              Reset Semua Data
-            </button>
+          <button
+            onClick={() => {
+              if (window.confirm('Apakah Anda yakin ingin mereset semua data?')) {
+                resetData();
+              }
+            }}
+            className="flex items-center gap-2 text-xs text-red-400 hover:text-red-500 transition-colors"
+          >
+            <RefreshCcw size={14} />
+            Reset Semua Data
+          </button>
         </div>
       </footer>
 
       {/* Profile Modal */}
-      <Modal 
-        isOpen={isProfileModalOpen} 
+      <Modal
+        isOpen={isProfileModalOpen}
         onClose={() => setIsProfileModalOpen(false)}
         title="Kelola Profil"
       >
         <div className="space-y-4">
           <div className="space-y-2 max-h-60 overflow-y-auto">
             {appState.profiles.map(profile => (
-              <div 
+              <div
                 key={profile.id}
                 onClick={() => switchProfile(profile.id)}
-                className={`flex items-center justify-between p-3 rounded-lg cursor-pointer border transition-all ${
-                  profile.id === appState.activeProfileId 
-                    ? 'bg-emerald-50 border-emerald-500 dark:bg-emerald-900/20 dark:border-emerald-700' 
-                    : 'bg-white border-slate-200 dark:bg-slate-700 dark:border-slate-600 hover:border-emerald-300'
-                }`}
+                className={`flex items-center justify-between p-3 rounded-lg cursor-pointer border transition-all ${profile.id === appState.activeProfileId
+                  ? 'bg-emerald-50 border-emerald-500 dark:bg-emerald-900/20 dark:border-emerald-700'
+                  : 'bg-white border-slate-200 dark:bg-slate-700 dark:border-slate-600 hover:border-emerald-300'
+                  }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                     profile.id === appState.activeProfileId 
-                     ? 'bg-emerald-500 text-white' 
-                     : 'bg-slate-200 text-slate-500 dark:bg-slate-600 dark:text-slate-300'
-                  }`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${profile.id === appState.activeProfileId
+                    ? 'bg-emerald-500 text-white'
+                    : 'bg-slate-200 text-slate-500 dark:bg-slate-600 dark:text-slate-300'
+                    }`}>
                     {profile.name.charAt(0).toUpperCase()}
                   </div>
                   <div>
@@ -443,10 +441,10 @@ export const App: React.FC = () => {
                   </div>
                 </div>
                 {profile.id !== appState.profiles[0].id && (
-                  <button 
+                  <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      if(window.confirm(`Hapus profil ${profile.name}?`)) {
+                      if (window.confirm(`Hapus profil ${profile.name}?`)) {
                         handleDeleteProfile(profile.id);
                       }
                     }}
@@ -462,14 +460,14 @@ export const App: React.FC = () => {
           <div className="pt-4 border-t dark:border-slate-700">
             <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2">TAMBAH PROFIL BARU</label>
             <div className="flex gap-2">
-              <input 
-                type="text" 
+              <input
+                type="text"
                 value={newProfileName}
                 onChange={(e) => setNewProfileName(e.target.value)}
                 placeholder="Nama profil..."
                 className="flex-1 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
-              <button 
+              <button
                 onClick={handleAddProfile}
                 disabled={!newProfileName.trim()}
                 className="bg-emerald-500 text-white p-2 rounded-lg hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed"
